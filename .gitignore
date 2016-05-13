@@ -34,5 +34,5 @@ app/
 
 runtime/
 
-*config/
+*db.js
 *.DS_Store

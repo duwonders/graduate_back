@@ -20,9 +20,10 @@ export default class extends Base {
   	// 	this.json({status: 400, message: '请求方法错误'});
   	// 	return;
   	// }else{
-  		// let js_tic = this.weiApi.getJsSdk(this);
-  		let openid = this.weiApi.getOpenid(this);
-  		this.json({status: 400, message: openid});
+  		// let js_tic = await this.weiApi.getJsSdk(this);
+  		let openid = await this.weiApi.getOpenid(this);
+  		// this.json({status: 200, message: js_tic});
+      this.json({status: 200, message: openid});
   	// }
   }
 /**

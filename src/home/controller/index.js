@@ -13,7 +13,9 @@ export default class extends Base {
     //auto render template file index_index.html
     return this.display();
   }
-
+  messageAction(){
+    return this.display();
+  }
   async loginAction(){
     this.weiApi = new comF();
   	// if(this.isPost()){

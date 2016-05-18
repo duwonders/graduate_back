@@ -1,0 +1,1 @@
+"use strict";setTimeout(function(){$(".waiting").css({opacity:0}),setTimeout(function(){$(".waiting").css({display:"none"})},2e3)},2e3);

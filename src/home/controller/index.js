@@ -14,6 +14,7 @@ export default class extends Base {
     return this.display();
   }
   messageAction(){
+    
     return this.display();
   }
   async loginAction(){

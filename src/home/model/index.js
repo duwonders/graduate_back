@@ -24,6 +24,12 @@ export default class extends think.model.base {
 		let people = await biao.query("SELECT count(*) as people FROM user WHERE idnum REGEXP '" + month_day + "'");
 		return people;
 	}
-
-	
+	async login(username, password){
+		let biao = this.model("user");
+		let data = await biao.where({
+			realname: username,
+			idnum: ['like', '%' + password]
+		}).select();
+		return data;
+	}
 }

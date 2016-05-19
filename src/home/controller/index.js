@@ -10,24 +10,64 @@ export default class extends Base {
    * 页面一逻辑部分
    */
   indexAction(){
-    //auto render template file index_index.html
     return this.display();
   }
-  messageAction(){
-    
-    return this.display();
+  async messageAction(){
+    let user = await this.session('username');
+    if(user){
+      let dateMessage = await this.getdayAction(); //剩余天数信息
+      if(dateMessage.left > 10){
+        dateMessage.ten = parseInt(dateMessage.left.toString()[0]);
+        dateMessage.one = parseInt(dateMessage.left.toString()[1]);
+      }else{
+        dateMessage.ten = parseInt(dateMessage.left.toString()[0]);
+      }
+      dateMessage.name = user;
+      let nameMessage = await this.samenameAction();  //姓氏信息
+      let sameageMessage = await this.getsamemonthAction();  //获取同月出生人的信息
+      let samestarMessage = await this.getsamestarAction(); //获取同一星座人信息
+      let samecityMessage = await this.getsamecityAction(); //获取同一城市人信息
+      let message = {
+        dateMessage: dateMessage,
+        nameMessage: nameMessage,
+        sameageMessage: sameageMessage,
+        samestarMessage: samestarMessage,
+        samecityMessage: samecityMessage,
+      }
+      this.assign('message', message);
+      console.log(message);
+      return this.display();
+    }else{
+      this.json({message: 'fuck'});
+    }
   }
+  /**
+   * 登录方法
+   */
   async loginAction(){
-    this.weiApi = new comF();
-  	// if(this.isPost()){
-  	// 	this.json({status: 400, message: '请求方法错误'});
-  	// 	return;
-  	// }else{
-  		// let js_tic = await this.weiApi.getJsSdk(this);
-  		let openid = await this.weiApi.getOpenid(this);
-  		// this.json({status: 200, message: js_tic});
-      this.json({status: 200, message: openid});
-  	// }
+    if(!this.isPost())
+      this.json({
+        status: 400,
+        message: '请求方法错误',
+      });
+    let username = this.post('username');
+    let password = this.post('password');
+    let data = await this.model('index').login(username, password);
+    let info = data[0];
+    if(info){
+      await this.session('username', info.realname);
+      await this.session('stunum', info.usernumber);
+      console.log(await this.session('username') + '   ' + await this.session('stunum'))
+      this.json({
+        status: 200,
+        message: '登陆成功',
+      });
+    }else{
+      this.json({
+        status: 401,
+        message: '用户名密码错误',
+      });
+    }
   }
 /**
  * 时间接口
@@ -40,7 +80,10 @@ export default class extends Base {
   	let now = this.parsetime();
   	let already = startIndex + now[0] * 31 + parseInt(now[1]);
   	let left = parseInt(now[0]) === 5 ? 31 - now[1] + 25 : 25 - now[2];  
-  	this.test([already, left]);
+  	return {
+      left: left,
+      already: already
+    }
   }
 /**
  * 
@@ -66,17 +109,15 @@ export default class extends Base {
  * percent{所占百分比}        					
  */
   async samenameAction(){
-    this.weiApi = new comF();
   	const allPerson = 6310;		//2012级所有人数
-
-
-  	let openid = 'ouRCyjjdeNhd2v9MJt67rHfN9WA4';
-  	let userInfo = await this.weiApi.getBindVerify(openid);
-    //这里的获取应该才session中拿
-
-  	let nameIndex = userInfo.realname[0];
+  	let name = await this.session('username');
+    let nameIndex = name[0];
   	let percent = await this.model('index').get_samename(nameIndex) / allPerson * 100;
-  	this.test([nameIndex, percent]);
+  	return {
+      nameIndex: nameIndex,
+      num: parseInt(6310 * percent / 100),
+      percent: percent.toFixed(2),
+    }
   }
 
 
@@ -89,7 +130,7 @@ export default class extends Base {
    * 返回生日birth
    */
   async getbirth(){
-    let stunum = 2012210001;
+    let stunum = await this.session('stunum');
     //这里的获取应该才session中拿
     
     let quereyRes = await this.model('index').get_idcard(stunum);
@@ -149,7 +190,7 @@ export default class extends Base {
     return{
       birth: birth, 
       num: num, 
-      percent: percent
+      percent: percent.toFixed(2),
     }
   }
   /**
@@ -176,7 +217,11 @@ export default class extends Base {
     }
     let num = starArrCount[star];
     let percent = num / allPerson * 100;
-    console.log({star: star, num: num, percent: percent});
+    return{
+      star: star, 
+      num: num, 
+      percent: percent.toFixed(2),
+    };
   }
 
 
@@ -270,11 +315,11 @@ export default class extends Base {
     let cityCode = idcardob[0].idnum.substring(0, 2);
     let city = area[cityCode];
     let message = await this.getSameCity(cityCode);
-    console.log({
+    return{
       city: city,
       num: message.num,
-      percent: message.percent
-    })
+      percent: message.percent.toFixed(2),
+    }
   }
 
   /**

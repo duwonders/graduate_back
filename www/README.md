@@ -52,4 +52,5 @@ npm run compile
 .a{
     background: url(../img/a.png) no-repeat;
 }
+author: duwonders
 ```

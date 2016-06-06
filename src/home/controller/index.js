@@ -79,7 +79,7 @@ export default class extends Base {
   	const startIndex = 1027;   //领导说包括节假日
   	let now = this.parsetime();
   	let already = startIndex + now[0] * 31 + parseInt(now[1]);
-  	let left = parseInt(now[0]) === 5 ? 31 - now[1] + 25 : 25 - now[2];  
+  	let left = parseInt(now[0]) === 5 ? 31 - now[1] + 25 : 25 - now[1];  
   	return {
       left: left,
       already: already

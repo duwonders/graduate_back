@@ -1,11 +1,11 @@
 {
   "apps": [{
-    "name": "gSeason",
+    "name": "毕业季2016找杜泽轩",
     "script": "www/production.js",
-    "cwd": "/Users/duzexuan/node/gSeason",
+    "cwd": "/root/graduate_back",
     "exec_mode": "cluster",
-    "instances": 0,
-    "max_memory_restart": "1G",
+    "instances": 1,
+    "max_memory_restart": "500M",
     "autorestart": true,
     "node_args": [],
     "args": [],
